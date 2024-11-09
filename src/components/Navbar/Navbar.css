@@ -1,0 +1,121 @@
+.navbar {
+  position: sticky;
+  width: 100%;
+  top: 0;
+  height: 56px;
+  background-color: #006400;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 1000;
+}
+
+.menu-button,
+.notification-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.menu-button:hover,
+.notification-button:hover {
+  background-color: #005400;
+  border-radius: 4px;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Remove circular styling */
+.username-display {
+  font-size: 1rem;
+  color: #ffffff; /* Adjust the color as needed */
+  margin-right: 1rem; /* Space it as you like */
+}
+
+
+
+.user-name {
+  font-size: 16px;
+  color: #333;
+  padding: 0 10px;
+  font-weight: bold;
+  cursor: default;
+}
+
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 1001;
+  padding: 16px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.sidebar-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.sidebar-menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 8px;
+}
+
+.sidebar-menu a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+  display: block;
+  padding: 8px 0;
+}
+
+.sidebar-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+  }
+}
