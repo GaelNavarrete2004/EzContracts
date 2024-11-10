@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import "./CreateContract.css";
 import Navbar from "../Navbar/Navbar";
+import Cookies from 'js-cookie'; 
 
 export default function CreateContract() {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export default function CreateContract() {
     const fetchClauses = async () => {
       try {
         const response = await fetch(
-          "http://64.23.180.219:8080/api/public/clauses",
+          "https://ezcontract-e556acf4694e.herokuapp.com/api/public/clauses",
           {
             method: "GET",
             credentials: "include", 
@@ -88,12 +89,14 @@ export default function CreateContract() {
     };
 
     try {
+      const token = Cookies.get('quackCookie');
       const response = await fetch(
-        "http://64.23.180.219:8080/api/users/contract",
+        "https://ezcontract-e556acf4694e.herokuapp.com/api/users/contract",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
           credentials: "include",

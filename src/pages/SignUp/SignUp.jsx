@@ -13,7 +13,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://64.23.180.219:8080/api/auth/signup", {
+      const response = await fetch("https://ezcontract-e556acf4694e.herokuapp.com/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

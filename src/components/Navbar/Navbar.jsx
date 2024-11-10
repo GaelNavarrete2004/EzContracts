@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Importa Link
 import { Menu, Bell, X } from "lucide-react";
 import "./Navbar.css";
 
@@ -11,9 +11,12 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const response = await fetch("http://64.23.180.219:8080/api/auth/username", {
-          credentials: "include",
-        });
+        const response = await fetch(
+          "https://ezcontract-e556acf4694e.herokuapp.com/api/auth/user",
+          {
+            credentials: "include",
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setFullName(data.fullname);
@@ -31,10 +34,13 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://64.23.180.219:8080/api/auth/signout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://ezcontract-e556acf4694e.herokuapp.com/api/auth/signout",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
       if (response.ok) {
         console.log("Logout successful");
         navigate("/login");
@@ -49,7 +55,11 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar">
-        <button className="menu-button" onClick={toggleMenu} aria-label="Toggle menu">
+        <button
+          className="menu-button"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
           <Menu />
         </button>
 
@@ -72,10 +82,17 @@ const Navbar = () => {
             </button>
           </div>
           <ul className="sidebar-menu">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><button onClick={handleLogout} className="logout-button">Logout</button></li>
+            <li>
+              <Link to="/" onClick={toggleMenu}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/user-profile">Profile</Link>
+            </li>
+            <li>
+                <Link onClick={handleLogout}> Logout </Link>
+            </li>
           </ul>
         </div>
       )}

@@ -1,20 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { RotateCcw, Ban, Printer, Download, ChevronDown } from "lucide-react";
-import "./ContractDetails.css";
 import Navbar from "../Navbar/Navbar";
+import "./ContractDetails.css";
 
 const ContractDetails = () => {
-  const monthlyPayments = [
-    { month: "Junio 2023", status: "paid", evidence: true },
-    { month: "Julio 2023", status: "unpaid", evidence: false },
-    { month: "Agosto 2023", status: "pending", evidence: false },
-    { month: "Septiembre 2023", status: "pending", evidence: false },
-    { month: "Octubre 2023", status: "pending", evidence: false },
-    { month: "Noviembre 2023", status: "pending", evidence: false },
-    { month: "Diciembre 2023", status: "pending", evidence: false },
-    { month: "Enero 2024", status: "pending", evidence: false },
-  ];
+  const { id } = useParams(); // Obtén el id del contrato desde la URL
+  const [contractDetails, setContractDetails] = useState(null); // Estado para los detalles del contrato
 
+  // Define la función getStatusClass para asignar clases según el estado de pago
   const getStatusClass = (status) => {
     switch (status) {
       case "paid":
@@ -25,6 +19,32 @@ const ContractDetails = () => {
         return "status-pending";
     }
   };
+
+  useEffect(() => {
+    // Función para obtener los detalles del contrato
+    const fetchContractDetails = async () => {
+      try {
+        const response = await fetch(
+          `https://ezcontract-e556acf4694e.herokuapp.com/api/users/contracts/${id}`,
+          { credentials: "include" }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setContractDetails(data);
+        } else {
+          console.error("Error fetching contract details");
+        }
+      } catch (error) {
+        console.error("Error in request:", error);
+      }
+    };
+
+    fetchContractDetails();
+  }, [id]);
+
+  if (!contractDetails) {
+    return <p>Cargando detalles del contrato...</p>;
+  }
 
   return (
     <>
@@ -43,60 +63,57 @@ const ContractDetails = () => {
               <div className="detail-row">
                 <div className="detail-group">
                   <label>Fecha de inicio contrato</label>
-                  <span>01 de Junio de 2023</span>
+                  <span>{contractDetails.startContract}</span>
                 </div>
                 <div className="detail-group">
                   <label>Fecha de finalización del contrato</label>
-                  <span>01 de Junio de 2024</span>
+                  <span>{contractDetails.endContract}</span>
                 </div>
               </div>
 
               <div className="detail-row">
                 <div className="detail-group">
                   <label>Monto de la renta</label>
-                  <span>$2,500.00 por mes</span>
-                </div>
-                <div className="detail-group">
-                  <label>Depósito de seguridad</label>
-                  <span>$2,500.00</span>
+                  <span>{contractDetails.cost} por mes</span>
                 </div>
               </div>
 
               <div className="detail-row">
                 <div className="detail-group">
                   <label>Nombre del inquilino</label>
-                  <span>Mahatma copil</span>
+                  <span>{contractDetails.renterName}</span>
                 </div>
                 <div className="detail-group">
                   <label>Correo electrónico del inquilino</label>
-                  <span>Mahatmacopil123@gmail.com</span>
+                  <span>{contractDetails.renterEmail}</span>
                 </div>
               </div>
 
               <div className="detail-row">
                 <div className="detail-group">
                   <label>Nombre del propietario</label>
-                  <span>Jane Smith</span>
+                  <span>{contractDetails.ownerName}</span>
                 </div>
                 <div className="detail-group">
                   <label>Correo electrónico del propietario</label>
-                  <span>john@example.com</span>
+                  <span>{contractDetails.ownerEmail}</span>
                 </div>
               </div>
 
               <div className="detail-row">
                 <div className="detail-group full-width">
                   <label>Dirección de la propiedad</label>
-                  <span>Calle 123, colonia #CP, estado, país</span>
+                  <span>{`${contractDetails.street}, ${contractDetails.numberHouse}, ${contractDetails.suburb}, ${contractDetails.state}, ${contractDetails.zip}, ${contractDetails.country}`}</span>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Aquí también se podrían mostrar los pagos mensuales */}
           <div className="payments-section">
             <h2>Ingresos mensuales</h2>
             <div className="payments-list">
-              {monthlyPayments.map((payment, index) => (
+              {contractDetails.monthlyPayments.map((payment, index) => (
                 <div key={index} className="payment-row">
                   <span className="month">{payment.month}</span>
                   <div className="payment-actions">
