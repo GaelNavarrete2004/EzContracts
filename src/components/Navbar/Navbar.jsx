@@ -64,9 +64,6 @@ const Navbar = () => {
         </button>
 
         <div className="right-section">
-          <button className="notification-button" aria-label="Notifications">
-            <Bell />
-          </button>
 
           {/* Display user's full name instead of avatar */}
           <div className="username-display">{fullName || "User"}</div>

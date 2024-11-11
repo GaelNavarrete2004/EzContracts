@@ -63,6 +63,23 @@ const Renew = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ownerName: contractData.ownerName,
+      ownerEmail: contractData.ownerEmail,
+      renterName: contractData.renterName,
+      renterEmail: contractData.renterEmail,
+      street: contractData.street,
+      numberHouse: contractData.numberHouse,
+      suburb: contractData.suburb,
+      zip: contractData.zip,
+      state: contractData.state,
+      country: contractData.country,
+      startContract: contractData.startContract,
+      endContract: contractData.endContract,
+      cost: parseFloat(contractData.cost),
+    };
+
     try {
       const token = Cookies.get("quackCookie");
       const response = await fetch(
@@ -73,13 +90,13 @@ const Renew = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
-          body: JSON.stringify(contractData),
+          body: JSON.stringify(payload),
         }
       );
+
       if (response.ok) {
         console.log("Contrato actualizado exitosamente");
-        navigate("/contracts");
+        navigate("/user-profile");
       } else {
         console.error("Error al actualizar el contrato");
       }
