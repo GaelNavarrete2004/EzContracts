@@ -56,9 +56,13 @@ const UserProfile = () => {
   // Function to check if a day has a contract expiring
   const isContractExpiringOnDay = (day) => {
     const currentDate = new Date();
-    const dateToCheck = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    const dateToCheck = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
 
-    return contracts.some(contract => {
+    return contracts.some((contract) => {
       const contractEndDate = new Date(contract.endContract);
       return (
         contractEndDate.getFullYear() === dateToCheck.getFullYear() &&
@@ -71,8 +75,16 @@ const UserProfile = () => {
   const generateCalendar = () => {
     const days = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
     const currentDate = new Date();
-    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const firstDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const lastDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
 
     const calendar = [];
     // Header row
@@ -90,7 +102,9 @@ const UserProfile = () => {
     let currentWeek = [];
     // Add empty cells for days before the first of the month
     for (let i = 0; i < firstDay.getDay(); i++) {
-      currentWeek.push(<div key={`empty-${i}`} className="calendar-cell empty"></div>);
+      currentWeek.push(
+        <div key={`empty-${i}`} className="calendar-cell empty"></div>
+      );
     }
 
     // Add days of the month
@@ -101,7 +115,9 @@ const UserProfile = () => {
       currentWeek.push(
         <div
           key={day}
-          className={`calendar-cell ${isToday ? "today" : ""} ${isExpiring ? "expiring-contract" : ""}`}
+          className={`calendar-cell ${isToday ? "today" : ""} ${
+            isExpiring ? "expiring-contract" : ""
+          }`}
         >
           {day}
         </div>
@@ -120,7 +136,12 @@ const UserProfile = () => {
     // Add remaining days
     if (currentWeek.length > 0) {
       while (currentWeek.length < 7) {
-        currentWeek.push(<div key={`empty-end-${currentWeek.length}`} className="calendar-cell empty"></div>);
+        currentWeek.push(
+          <div
+            key={`empty-end-${currentWeek.length}`}
+            className="calendar-cell empty"
+          ></div>
+        );
       }
       calendar.push(
         <div key="last-week" className="calendar-row">
@@ -144,7 +165,8 @@ const UserProfile = () => {
             <div className="user-info">
               <h1>{fullName}</h1>
               <p className="stats">
-                Contratos: {contracts.length} <span className="separator">•</span> Renovaciones pendientes: 0
+                Contratos: {contracts.length}{" "}
+                <span className="separator">•</span> Renovaciones pendientes: 0
               </p>
             </div>
           </div>
@@ -165,9 +187,13 @@ const UserProfile = () => {
                   </div>
                   <div className="contract-actions">
                     <Link to={`/contract-details/${contract.id}`}>
-                      <button className="details-button">Ver más detalles</button>
+                      <button className="details-button">
+                        Ver más detalles
+                      </button>
                     </Link>
-                    <button className="renew-button">Renovar</button>
+                    <Link to={`/renew/${contract.id}`}>
+                      <button className="renew-button">Renovar</button>
+                    </Link>
                   </div>
                 </div>
               ))}

@@ -5,10 +5,9 @@ import Navbar from "../Navbar/Navbar";
 import "./ContractDetails.css";
 
 const ContractDetails = () => {
-  const { id } = useParams(); // Obtén el id del contrato desde la URL
-  const [contractDetails, setContractDetails] = useState(null); // Estado para los detalles del contrato
+  const { id } = useParams();
+  const [contractDetails, setContractDetails] = useState(null);
 
-  // Define la función getStatusClass para asignar clases según el estado de pago
   const getStatusClass = (status) => {
     switch (status) {
       case "paid":
@@ -21,11 +20,10 @@ const ContractDetails = () => {
   };
 
   useEffect(() => {
-    // Función para obtener los detalles del contrato
     const fetchContractDetails = async () => {
       try {
         const response = await fetch(
-          `https://ezcontract-e556acf4694e.herokuapp.com/api/users/contracts/${id}`,
+          `C`,
           { credentials: "include" }
         );
         if (response.ok) {
@@ -109,33 +107,34 @@ const ContractDetails = () => {
             </div>
           </div>
 
-          {/* Aquí también se podrían mostrar los pagos mensuales */}
           <div className="payments-section">
             <h2>Ingresos mensuales</h2>
             <div className="payments-list">
-              {contractDetails.monthlyPayments.map((payment, index) => (
-                <div key={index} className="payment-row">
-                  <span className="month">{payment.month}</span>
-                  <div className="payment-actions">
-                    <span
-                      className={`status ${getStatusClass(payment.status)}`}
-                    >
-                      {payment.status === "paid"
-                        ? "Pagado"
-                        : payment.status === "unpaid"
-                        ? "Sin pagar"
-                        : "Pendiente"}
-                    </span>
-                    <button
-                      className={`evidence-button ${
-                        payment.evidence ? "has-evidence" : ""
-                      }`}
-                    >
-                      {payment.evidence ? "Evidencia" : "Subir evidencia"}
-                    </button>
+              {contractDetails.monthlyPayments && contractDetails.monthlyPayments.length > 0 ? (
+                contractDetails.monthlyPayments.map((payment, index) => (
+                  <div key={index} className="payment-row">
+                    <span className="month">{payment.month}</span>
+                    <div className="payment-actions">
+                      <span className={`status ${getStatusClass(payment.status)}`}>
+                        {payment.status === "paid"
+                          ? "Pagado"
+                          : payment.status === "unpaid"
+                          ? "Sin pagar"
+                          : "Pendiente"}
+                      </span>
+                      <button
+                        className={`evidence-button ${
+                          payment.evidence ? "has-evidence" : ""
+                        }`}
+                      >
+                        {payment.evidence ? "Evidencia" : "Subir evidencia"}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p>No hay información de pagos disponibles.</p>
+              )}
             </div>
             <button className="expand-button">
               <ChevronDown size={20} />

@@ -1,48 +1,99 @@
-import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
-import Navbar from "../Navbar/Navbar";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
 import "./Renew.css";
+import Navbar from "../Navbar/Navbar";
 
-export default function Renew() {
-  const [formData, setFormData] = useState({
+const Renew = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [contractData, setContractData] = useState({
+    startContract: "",
+    endContract: "",
+    cost: "",
+    renterName: "",
+    renterEmail: "",
     ownerName: "",
     ownerEmail: "",
-    tenantName: "",
-    tenantEmail: "",
     street: "",
-    exteriorNumber: "",
-    neighborhood: "",
-    postalCode: "",
+    numberHouse: "",
+    suburb: "",
     state: "",
+    zip: "",
     country: "",
-    startDate: "",
-    endDate: "",
-    rentAmount: "",
-    securityDeposit: "",
-    ownerTermination: false,
-    tenantTermination: false,
-    modifications: false,
   });
 
+  useEffect(() => {
+    if (!id) {
+      console.error("No se encontró el ID del contrato.");
+      return;
+    }
+
+    const fetchContractData = async () => {
+      try {
+        const token = Cookies.get("quackCookie");
+        const response = await fetch(
+          `https://ezcontract-e556acf4694e.herokuapp.com/api/users/contracts/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setContractData(data);
+        } else {
+          console.error("Error al cargar el contrato.");
+        }
+      } catch (error) {
+        console.error("Error en la solicitud:", error);
+      }
+    };
+
+    fetchContractData();
+  }, [id]);
+
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setContractData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      const token = Cookies.get("quackCookie");
+      const response = await fetch(
+        `https://ezcontract-e556acf4694e.herokuapp.com/api/users/contract/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(contractData),
+        }
+      );
+      if (response.ok) {
+        console.log("Contrato actualizado exitosamente");
+        navigate("/contracts");
+      } else {
+        console.error("Error al actualizar el contrato");
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+    }
   };
 
   return (
     <>
       <Navbar />
       <div className="contract-form">
-        <h1>Renovar contrato de usuario</h1>
-        <p className="subtitle">Rellene el siguiente formulario</p>
+        <h1>Renovar contrato</h1>
+        <p className="subtitle">Actualice la información del contrato</p>
 
         <form onSubmit={handleSubmit}>
           <section>
@@ -53,8 +104,7 @@ export default function Renew() {
                 <input
                   type="text"
                   name="ownerName"
-                  placeholder="Ingrese el nombre completo según una identificación oficial"
-                  value={formData.ownerName}
+                  value={contractData.ownerName}
                   onChange={handleInputChange}
                 />
               </div>
@@ -63,8 +113,7 @@ export default function Renew() {
                 <input
                   type="email"
                   name="ownerEmail"
-                  placeholder="ejemplo@email.com"
-                  value={formData.ownerEmail}
+                  value={contractData.ownerEmail}
                   onChange={handleInputChange}
                 />
               </div>
@@ -78,9 +127,8 @@ export default function Renew() {
                 <label>Nombre completo del inquilino</label>
                 <input
                   type="text"
-                  name="tenantName"
-                  placeholder="Ingrese el nombre completo según una identificación oficial"
-                  value={formData.tenantName}
+                  name="renterName"
+                  value={contractData.renterName}
                   onChange={handleInputChange}
                 />
               </div>
@@ -88,9 +136,8 @@ export default function Renew() {
                 <label>Correo electrónico del inquilino</label>
                 <input
                   type="email"
-                  name="tenantEmail"
-                  placeholder="ejemplo@email.com"
-                  value={formData.tenantEmail}
+                  name="renterEmail"
+                  value={contractData.renterEmail}
                   onChange={handleInputChange}
                 />
               </div>
@@ -105,8 +152,7 @@ export default function Renew() {
                 <input
                   type="text"
                   name="street"
-                  placeholder="Ej. Zaragoza"
-                  value={formData.street}
+                  value={contractData.street}
                   onChange={handleInputChange}
                 />
               </div>
@@ -114,9 +160,8 @@ export default function Renew() {
                 <label>Número exterior</label>
                 <input
                   type="text"
-                  name="exteriorNumber"
-                  placeholder="Ej. 100"
-                  value={formData.exteriorNumber}
+                  name="numberHouse"
+                  value={contractData.numberHouse}
                   onChange={handleInputChange}
                 />
               </div>
@@ -124,9 +169,8 @@ export default function Renew() {
                 <label>Colonia</label>
                 <input
                   type="text"
-                  name="neighborhood"
-                  placeholder="Ej. Revolución"
-                  value={formData.neighborhood}
+                  name="suburb"
+                  value={contractData.suburb}
                   onChange={handleInputChange}
                 />
               </div>
@@ -134,9 +178,8 @@ export default function Renew() {
                 <label>Código Postal (CP)</label>
                 <input
                   type="text"
-                  name="postalCode"
-                  placeholder="Ej. 45810"
-                  value={formData.postalCode}
+                  name="zip"
+                  value={contractData.zip}
                   onChange={handleInputChange}
                 />
               </div>
@@ -145,8 +188,7 @@ export default function Renew() {
                 <input
                   type="text"
                   name="state"
-                  placeholder="Ej. Jalisco"
-                  value={formData.state}
+                  value={contractData.state}
                   onChange={handleInputChange}
                 />
               </div>
@@ -155,8 +197,7 @@ export default function Renew() {
                 <input
                   type="text"
                   name="country"
-                  placeholder="Ej. México"
-                  value={formData.country}
+                  value={contractData.country}
                   onChange={handleInputChange}
                 />
               </div>
@@ -168,115 +209,41 @@ export default function Renew() {
             <div className="form-row">
               <div className="form-group">
                 <label>Fecha de inicio del contrato</label>
-                <div className="select-wrapper">
-                  <select
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Selecciona una fecha</option>
-                  </select>
-                  <ChevronDown className="select-icon" />
-                </div>
+                <input
+                  type="date"
+                  name="startContract"
+                  value={contractData.startContract}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="form-group">
                 <label>Fecha de finalización del contrato</label>
-                <div className="select-wrapper">
-                  <select
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Selecciona una fecha</option>
-                  </select>
-                  <ChevronDown className="select-icon" />
-                </div>
+                <input
+                  type="date"
+                  name="endContract"
+                  value={contractData.endContract}
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Monto total de la renta</label>
-                <div className="currency-input">
-                  <span>$0</span>
-                  <input
-                    type="number"
-                    name="rentAmount"
-                    value={formData.rentAmount}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Depósito de seguridad (Opcional)</label>
-                <div className="currency-input">
-                  <span>$0</span>
-                  <input
-                    type="number"
-                    name="securityDeposit"
-                    value={formData.securityDeposit}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
+            <div className="form-group">
+              <label>Monto total de la renta</label>
+              <input
+                type="number"
+                name="cost"
+                value={contractData.cost}
+                onChange={handleInputChange}
+              />
             </div>
           </section>
 
-          <section>
-            <h2>Cláusulas adicionales del contrato</h2>
-            <div className="checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="ownerTermination"
-                  checked={formData.ownerTermination}
-                  onChange={handleInputChange}
-                />
-                <span>El propietario termina el contrato</span>
-                <p className="checkbox-description">
-                  Si el dueño de la propiedad decide no renovar la duración, el
-                  arrendatario deberá recibir una notificación 30 días antes de
-                  que acabe el convenio, así el inquilino podrá buscar otra
-                  propiedad
-                </p>
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="tenantTermination"
-                  checked={formData.tenantTermination}
-                  onChange={handleInputChange}
-                />
-                <span>El inquilino termina el contrato</span>
-                <p className="checkbox-description">
-                  Si el inquilino decide rescindir del contrato deberá avisar al
-                  propietario con 30 días de antelación por medio de un escrito.
-                  Además, deberá cubrir una cuota de condonación por la
-                  cancelación del convenio. Si la suspensión se hace durante
-                  el...
-                </p>
-              </label>
-            </div>
-            <div className="checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="modifications"
-                  checked={formData.modifications}
-                  onChange={handleInputChange}
-                />
-                <span>Modificaciones</span>
-                <p className="checkbox-description">
-                  El arrendatario no podrá realizar modificaciones
-                  estructurales, decorativas o de cualquier tipo sin el
-                  consentimiento previo por escrito del arrendador
-                </p>
-              </label>
-            </div>
-          </section>
+          <button type="submit" className="save-button">
+            Actualizar contrato
+          </button>
         </form>
       </div>
     </>
   );
-}
+};
+
+export default Renew;
